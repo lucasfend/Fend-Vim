@@ -49,7 +49,8 @@ return {
             enable_diagnostics = false,
 
             filesystem = {
-                group_empty_dirs = false,
+                group_empty_dirs = true,
+
                 follow_current_file = { enabled = true },
                 use_libuv_file_watcher = true,
                 filtered_items = {
@@ -62,6 +63,8 @@ return {
             default_component_configs = {
                 -- visual configs
                 indent = {
+                    indent_size = 2,
+                    padding = 0,
                     with_markers = true,
                     indent_marker = "│",
                     last_indent_marker = "└",
@@ -80,7 +83,6 @@ return {
 
                 git_status = {
                     symbols = {
-                        -- git icons
                         added = "+",
                         modified = "",
                         deleted = "x",
@@ -106,7 +108,7 @@ return {
             },
 
             window = {
-                width = 30,
+                width = 45,
                 mappings = {
                     ["/"] = "noop",
                 },
