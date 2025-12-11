@@ -1,7 +1,15 @@
 return {
     { "projekt0n/github-nvim-theme" },
-    { "doums/darcula" },
-    { "nyoom-engineering/oxocarbon.nvim" },
+
+    {
+        "nyoom-engineering/oxocarbon.nvim",
+        config = function()
+            vim.opt.background = "dark"
+            vim.cmd("colorscheme oxocarbon")
+
+            vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#161616", bg = "#161616" })
+        end,
+    },
 
     {
         "shaunsingh/nord.nvim",
@@ -11,32 +19,6 @@ return {
             vim.g.nord_disable_background = false
             vim.g.nord_italic = false
         end,
-    },
-
-    {
-        "rebelot/kanagawa.nvim",
-        opts = {
-            compile = true,
-            commentStyle = { italic = true },
-            keywordStyle = { italic = true },
-            theme = "dragon",
-            colors = {
-                theme = {
-                    all = {
-                        ui = {
-                            bg_gutter = "none",
-                        },
-                    },
-                },
-            },
-            overrides = function(colors)
-                return {
-                    NormalFloat = { bg = "none" },
-                    FloatBorder = { bg = "none" },
-                    float = { bg = "none" },
-                }
-            end,
-        },
     },
 
     {
@@ -51,22 +33,8 @@ return {
         config = function(_, opts)
             require("lazyvim.util").config.setup(opts)
             vim.opt.foldcolumn = "0"
+            vim.opt.fillchars = { vert = " ", eob = " ", diff = "╱" }
         end,
-    },
-
-    {
-        "akinsho/bufferline.nvim",
-        opts = {
-            options = {
-                separator_style = "slant",
-                always_show_bufferline = true,
-                show_buffer_close_icons = false,
-                show_close_icon = false,
-                indicator = {
-                    style = "none",
-                },
-            },
-        },
     },
 
     {

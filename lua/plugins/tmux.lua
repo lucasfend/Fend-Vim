@@ -1,5 +1,5 @@
 return {
-    -- navigation
+    -- keybinds
     {
         "christoomey/vim-tmux-navigator",
         cmd = { "TmuxNavigateLeft", "TmuxNavigateDown", "TmuxNavigateUp", "TmuxNavigateRight", "TmuxNavigatePrevious" },
@@ -21,74 +21,119 @@ return {
         end,
         config = function()
             vim.opt.laststatus = 0
+            vim.opt.cmdheight = 0
             vim.cmd([[
-        augroup TpipelineHideStatus
-          autocmd!
-          autocmd VimEnter,BufEnter * set laststatus=0
-        augroup END
-      ]])
+                augroup TpipelineHideStatus
+                  autocmd!
+                  autocmd VimEnter,BufEnter * set laststatus=0
+                augroup END
+            ]])
         end,
     },
 
-    -- lualine
     {
         "nvim-lualine/lualine.nvim",
         opts = function(_, opts)
             opts.options.globalstatus = false
             opts.options.section_separators = { left = "", right = "" }
-            opts.options.component_separators = { left = "|", right = "|" }
+            opts.options.component_separators = { left = "", right = "" }
 
+            -- colors
             local colors = {
-                bg_island = "#3B4252",
-                fg_text = "#D8DEE9",
-                fg_icon = "#88C0D0",
-                transparent = "None",
+                pink = "#ff7eb6",
+                text = "#c0c0c0",
+                dim = "#505050",
+                trans = "None",
+
+                error = "#d75f5f",
+                warn = "#d7875f",
+                info = "#d75f87",
             }
 
-            -- only visual stuff
+            -- theme itself
+            opts.options.theme = {
+                normal = {
+                    a = { fg = colors.pink, bg = colors.trans, gui = "bold" },
+                    b = { fg = colors.text, bg = colors.trans },
+                    c = { fg = colors.text, bg = colors.trans },
+                },
+                insert = {
+                    a = { fg = colors.pink, bg = colors.trans, gui = "bold" },
+                    b = { fg = colors.text, bg = colors.trans },
+                    c = { fg = colors.text, bg = colors.trans },
+                },
+                visual = {
+                    a = { fg = colors.pink, bg = colors.trans, gui = "bold" },
+                    b = { fg = colors.text, bg = colors.trans },
+                    c = { fg = colors.text, bg = colors.trans },
+                },
+                replace = {
+                    a = { fg = colors.pink, bg = colors.trans, gui = "bold" },
+                    b = { fg = colors.text, bg = colors.trans },
+                    c = { fg = colors.text, bg = colors.trans },
+                },
+                command = {
+                    a = { fg = colors.pink, bg = colors.trans, gui = "bold" },
+                    b = { fg = colors.text, bg = colors.trans },
+                    c = { fg = colors.text, bg = colors.trans },
+                },
+                inactive = {
+                    a = { fg = colors.dim, bg = colors.trans },
+                    b = { fg = colors.dim, bg = colors.trans },
+                    c = { fg = colors.dim, bg = colors.trans },
+                },
+            }
+
+            -- left section
             opts.sections.lualine_a = {
                 {
-                    function()
-                        return ""
-                    end,
-                    padding = { left = 0, right = 0 },
-                    color = { fg = colors.bg_island, bg = colors.transparent },
-                },
-                {
-                    function()
-                        return ""
-                    end,
-                    padding = { left = 1, right = 1 },
-                    color = { fg = colors.fg_icon, bg = colors.bg_island },
-                },
-                {
-                    function()
-                        return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
-                    end,
-                    padding = { left = 0, right = 1 },
-                    color = { fg = colors.fg_text, bg = colors.bg_island, gui = "bold" },
-                },
-                {
-                    function()
-                        return ""
-                    end,
-                    padding = { left = 0, right = 0 },
-                    color = { fg = colors.bg_island, bg = colors.transparent },
+                    "mode",
+                    icon = "",
+                    padding = { left = 2, right = 2 },
                 },
             }
 
-            opts.sections.lualine_b = {}
-            opts.sections.lualine_c = {}
-            opts.sections.lualine_x = {}
+            opts.sections.lualine_b = {
+                {
+                    "filename",
+                    file_status = true,
+                    path = 0,
+                    color = { fg = colors.pink, gui = "bold" },
+                    padding = { left = 1, right = 1 },
+                },
+            }
+
+            opts.sections.lualine_c = {
+                {
+                    "branch",
+                    icon = "",
+                    color = { fg = colors.pink, gui = "bold" },
+                    padding = { left = 2, right = 2 },
+                },
+            }
+
+            opts.sections.lualine_x = {
+                {
+                    "diagnostics",
+                    sources = { "nvim_diagnostic" },
+                    symbols = { error = " ", warn = " ", info = " " },
+                    diagnostics_color = {
+                        error = { fg = colors.error, bg = colors.trans },
+                        warn = { fg = colors.warn, bg = colors.trans },
+                        info = { fg = colors.info, bg = colors.trans },
+                    },
+                    padding = { left = 2, right = 2 },
+                },
+            }
             opts.sections.lualine_y = {}
 
+            -- lsp get setup
             local function get_lsp()
                 local msg = ""
                 local clients = vim.lsp.get_clients()
                 if next(clients) == nil then
                     return msg
                 end
-
                 local client_names = {}
                 for _, client in ipairs(clients) do
                     if client.name ~= "null-ls" and client.name ~= "copilot" then
@@ -96,69 +141,25 @@ return {
                     end
                 end
                 if #client_names > 0 then
-                    return "  " .. table.concat(client_names, ", ")
+                    return "  " .. table.concat(client_names, ", ")
                 end
                 return msg
             end
 
+            -- lps and clock infos
             opts.sections.lualine_z = {
                 {
-                    function()
-                        return ""
-                    end,
-                    padding = { left = 0, right = 0 },
-                    color = { fg = colors.bg_island, bg = colors.transparent },
-                },
-                {
                     get_lsp,
-                    color = { fg = "#EBCB8B", bg = colors.bg_island },
-                    padding = { left = 1, right = 1 },
-                },
-                {
-                    function()
-                        return "|"
-                    end,
-                    color = { fg = colors.fg_text, bg = colors.bg_island },
-                    padding = { left = 0, right = 0 },
-                    cond = function()
-                        return #vim.lsp.get_clients() > 0
-                    end,
+                    color = { fg = colors.pink, gui = "bold" },
+                    padding = { left = 1, right = 2 },
                 },
                 {
                     "datetime",
-                    style = "%H:%M",
-                    color = { fg = colors.fg_text, bg = colors.bg_island, gui = "bold" },
-                    padding = { left = 1, right = 1 },
-                },
-                {
-                    function()
-                        return ""
-                    end,
-                    padding = { left = 0, right = 0 },
-                    color = { fg = colors.bg_island, bg = colors.transparent },
+                    style = "  %H:%M",
+                    color = { fg = colors.pink, gui = "bold" },
+                    padding = { left = 1, right = 2 },
                 },
             }
-        end,
-    },
-
-    {
-        "folke/snacks.nvim",
-        opts = function()
-            vim.api.nvim_create_autocmd({ "BufEnter", "FocusGained" }, {
-                callback = function()
-                    local file = vim.fn.expand("%:t")
-                    if file == "" then
-                        file = "[No Name]"
-                    end
-                    local extension = vim.fn.expand("%:e")
-                    local icon, _ = require("nvim-web-devicons").get_icon(file, extension)
-                    if not icon then
-                        icon = ""
-                    end
-
-                    vim.fn.system("tmux rename-window '" .. icon .. " " .. file .. "'")
-                end,
-            })
         end,
     },
 }

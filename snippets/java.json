@@ -1,0 +1,9 @@
+{
+    "Private Final Dependency": {
+        "prefix": "pf",
+        "body": [
+            "private final ${1:Type} ${2:name};"
+        ],
+        "description": "Dependency injection snippet"
+    }
+}

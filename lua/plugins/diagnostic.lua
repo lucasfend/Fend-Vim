@@ -29,9 +29,9 @@ return {
             -- unset the default LazyVim diagnostic
             vim.diagnostic.config({
                 virtual_text = false,
-                -- signs = true,
-                -- underline = true,
-                -- update_in_insert = false,
+                signs = true,
+                underline = true,
+                update_in_insert = false,
             })
         end,
     },
