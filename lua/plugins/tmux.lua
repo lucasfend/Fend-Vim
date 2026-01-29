@@ -125,6 +125,7 @@ return {
                     padding = { left = 2, right = 2 },
                 },
             }
+
             opts.sections.lualine_y = {}
 
             -- lsp get setup
