@@ -44,21 +44,17 @@ return {
                 return { bg = colors.bubble, fg = fg_color, gui = "bold" }
             end
 
-            -- Verifica Diagnósticos
             local function has_diagnostic()
                 local d = vim.diagnostic.get(0)
                 return d and #d > 0
             end
 
-            -- Verifica LSP
             local function has_lsp()
                 local clients = vim.lsp.get_clients()
                 return next(clients) ~= nil
             end
 
-            -- Verifica Git Branch (Para evitar espaços vazios)
             local function has_branch()
-                -- Verifica gitsigns (padrão moderno) ou se o buffer tem variaveis git
                 return vim.b.gitsigns_status_dict ~= nil or vim.b.gitsigns_head ~= nil
             end
 
@@ -83,11 +79,7 @@ return {
             opts.sections.lualine_y = {}
             opts.sections.lualine_z = {}
 
-            -- ==========================
-            --  BOLHA DA ESQUERDA
-            -- ==========================
             opts.sections.lualine_c = {
-                -- 1. MODO (Sempre visível)
                 {
                     "mode",
                     fmt = function(str)
@@ -98,22 +90,18 @@ return {
                     padding = { left = 1, right = 1 },
                 },
 
-                split(), -- Separador Modo | Próximo
+                split(),
 
-                -- 2. BRANCH (Condicional)
                 {
                     "branch",
                     icon = "",
                     color = bubble_style(colors.purple),
                     padding = { left = 1, right = 1 },
-                    cond = has_branch, -- Só aparece se tiver git
+                    cond = has_branch,
                 },
 
-                -- Este separador só aparece se tiver branch, para separar Branch | Arquivo
-                -- Se não tiver branch, o separador acima (do modo) servirá para o arquivo
                 split(has_branch),
 
-                -- 3. ARQUIVO (Sempre visível)
                 {
                     function()
                         local fname = vim.fn.expand("%:t")
@@ -138,11 +126,7 @@ return {
                 },
             }
 
-            -- ==========================
-            --  BOLHA DA DIREITA
-            -- ==========================
             opts.sections.lualine_x = {
-                -- 1. Borda Inicial
                 {
                     function()
                         return ""
@@ -150,7 +134,6 @@ return {
                     color = { fg = colors.bubble, bg = colors.bg },
                     padding = { left = 0, right = 0 },
                 },
-                -- 2. Diagnostics
                 {
                     "diagnostics",
                     sources = { "nvim_diagnostic" },
@@ -165,7 +148,6 @@ return {
                 },
                 split(has_diagnostic),
 
-                -- 3. LSP
                 {
                     function()
                         local clients = vim.lsp.get_clients()
@@ -188,15 +170,13 @@ return {
                 },
                 split(has_lsp),
 
-                -- 4. SIZE (Cor alterada para CYAN)
                 {
                     "filesize",
-                    color = bubble_style(colors.cyan), -- Mudado de green para cyan
+                    color = bubble_style(colors.cyan),
                     padding = { left = 1, right = 1 },
                 },
                 split(),
 
-                -- 5. STATS
                 {
                     function()
                         local line = vim.fn.line(".")
