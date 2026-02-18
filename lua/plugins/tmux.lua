@@ -14,16 +14,6 @@ return {
     },
 
     {
-        "vimpostor/vim-tpipeline",
-        dependencies = { "nvim-lualine/lualine.nvim" },
-        enabled = inside_tmux,
-        config = function()
-            vim.opt.cmdheight = 0
-            vim.opt.laststatus = 0
-        end,
-    },
-
-    {
         "nvim-lualine/lualine.nvim",
         dependencies = { "nvim-tree/nvim-web-devicons" },
         init = function()
