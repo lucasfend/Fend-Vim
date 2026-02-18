@@ -1,9 +1,18 @@
 return {
     {
         "folke/snacks.nvim",
+
+        priority = 1000,
+        lazy = false,
+
         keys = {
             { "<leader>e", false },
             { "<leader>E", false },
+        },
+
+        opts = {
+            scroll = { enabled = true },
+            indent = { enabled = false },
         },
     },
 
@@ -14,6 +23,7 @@ return {
             "nvim-tree/nvim-web-devicons",
             "MunifTanjim/nui.nvim",
         },
+
         keys = {
             {
                 "<leader>e",
@@ -44,23 +54,8 @@ return {
                 desc = "Buffer Explorer",
             },
         },
+
         init = function()
-            -- BORDAS: Mantém a cor escura do tema
-            vim.api.nvim_set_hl(0, "NeoTreeWinSeparator", { fg = "#161616", bg = "#161616" })
-            vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#161616", bg = "#161616" })
-
-            -- CORES DOS DIRETÓRIOS
-            vim.api.nvim_set_hl(0, "NeoTreeDirectoryIcon", { fg = "#ff7eb6" })
-            vim.api.nvim_set_hl(0, "NeoTreeDirectoryName", { fg = "#00ffff" })
-
-            -- >>> CORREÇÃO DA SATURAÇÃO (FIX) <<<
-            -- Isso força o Neo-tree a usar a mesma cor de fundo "Normal" (a padrão do editor)
-            -- tanto quando está focado quanto quando não está.
-            vim.api.nvim_set_hl(0, "NeoTreeNormal", { link = "Normal" })
-            vim.api.nvim_set_hl(0, "NeoTreeNormalNC", { link = "Normal" })
-            vim.api.nvim_set_hl(0, "NeoTreeEndOfBuffer", { link = "Normal" })
-
-            -- Remove a barra de título (Winbar) para ficar mais limpo
             vim.api.nvim_create_autocmd("FileType", {
                 pattern = "neo-tree",
                 callback = function()
@@ -68,7 +63,10 @@ return {
                 end,
             })
         end,
+
         opts = {
+            close_if_last_window = true,
+
             source_selector = {
                 winbar = false,
                 statusline = false,
@@ -89,6 +87,10 @@ return {
             },
 
             default_component_configs = {
+                container = {
+                    enable_character_fade = false,
+                },
+
                 indent = {
                     indent_size = 2,
                     padding = 0,
@@ -141,6 +143,7 @@ return {
                 mappings = {
                     ["/"] = "noop",
                 },
+                winhighlight = "Normal:Normal,NormalNC:Normal,SignColumn:SignColumn,EndOfBuffer:EndOfBuffer,CursorLine:CursorLine,WinSeparator:WinSeparator",
             },
         },
     },

@@ -1,30 +1,58 @@
 return {
-    { "projekt0n/github-nvim-theme" },
-
     {
-        "nyoom-engineering/oxocarbon.nvim",
+        "ellisonleao/gruvbox.nvim",
+        priority = 1000,
         config = function()
-            vim.opt.background = "dark"
-            vim.cmd("colorscheme oxocarbon")
+            require("gruvbox").setup({
+                contrast = "hard",
+                transparent_mode = true,
+            })
 
-            vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#161616", bg = "#161616" })
-        end,
-    },
+            local function set_transparency()
+                local groups = {
+                    "Normal",
+                    "NormalNC",
+                    "NormalFloat",
+                    "FloatBorder",
+                    "FloatTitle",
+                    "FloatShadow",
+                    "FloatShadowThrough",
+                    "NeoTreeNormal",
+                    "NeoTreeNormalNC",
+                    "NeoTreeEndOfBuffer",
+                    "NeoTreeSignColumn",
+                    "NeoTreeFloatBorder",
+                    "NeoTreeFloatTitle",
+                    "NeoTreeTitleBar",
+                    "NeoTreeWinSeparator",
+                    "EndOfBuffer",
+                    "SignColumn",
+                    "WinSeparator",
+                    "CursorLine",
+                    "NeoTreeCursorLine",
+                    "Pmenu",
+                    "NormalSB",
+                }
 
-    {
-        "shaunsingh/nord.nvim",
-        config = function()
-            vim.g.nord_contrast = true
-            vim.g.nord_borders = false
-            vim.g.nord_disable_background = false
-            vim.g.nord_italic = false
+                for _, group in ipairs(groups) do
+                    vim.api.nvim_set_hl(0, group, { bg = "NONE", ctermbg = "NONE" })
+                end
+            end
+
+            set_transparency()
+
+            vim.api.nvim_create_autocmd({ "VimEnter", "UIEnter", "ColorScheme" }, {
+                callback = function()
+                    vim.schedule(set_transparency)
+                end,
+            })
         end,
     },
 
     {
         "LazyVim/LazyVim",
         opts = {
-            colorscheme = "oxocarbon",
+            colorscheme = "gruvbox",
             defaults = {
                 autocmds = true,
                 keymaps = true,
@@ -48,20 +76,6 @@ return {
 
     { "lukas-reineke/indent-blankline.nvim", enabled = false },
     { "nvim-mini/mini.indentscope", enabled = false },
-
-    {
-        "folke/noice.nvim",
-        enabled = false,
-        opts = {
-            cmdline = { view = "cmdline" },
-        },
-    },
-
-    {
-        "folke/snacks.nvim",
-        opts = {
-            indent = { enabled = false },
-            scope = { enabled = false },
-        },
-    },
+    { "folke/noice.nvim", enabled = false },
+    { "nvim-mini/mini.animate", enabled = false },
 }

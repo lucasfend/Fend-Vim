@@ -37,98 +37,63 @@ return {
         end,
         opts = function(_, opts)
             opts.options.globalstatus = true
-            opts.options.component_separators = { left = "", right = "" }
-            opts.options.section_separators = { left = "", right = "" }
+            opts.options.theme = "gruvbox"
+            opts.options.component_separators = { left = "", right = "" }
+            opts.options.section_separators = { left = "", right = "" }
 
-            local colors = {
-                text = "#dde1e6",
-                dim = "#525252",
-                pink = "#ff7eb6",
-                purple = "#be95ff",
-                blue = "#33b1ff",
-                teal = "#08bdba",
-                cyan = "#3ddbd9",
-                green = "#42be65",
-                lblue = "#82cfff",
-                red = "#ee5396",
-                trans = "None",
-            }
-
-            local function txt_style(fg_color)
-                return { bg = colors.trans, fg = fg_color, gui = "bold" }
-            end
-
-            local function has_branch()
-                return vim.b.gitsigns_status_dict ~= nil or vim.b.gitsigns_head ~= nil
-            end
-            local function has_diagnostic()
-                local d = vim.diagnostic.get(0)
-                return d and #d > 0
-            end
-            local function has_lsp()
-                local clients = vim.lsp.get_clients()
-                return next(clients) ~= nil
-            end
-
-            local function split(condition)
-                return {
-                    function()
-                        return "│"
-                    end,
-                    color = { fg = colors.dim, bg = colors.trans },
-                    padding = { left = 0, right = 0 },
-                    cond = condition,
-                }
-            end
-
-            opts.options.theme = {
-                normal = { c = { fg = colors.text, bg = colors.trans }, x = { fg = colors.text, bg = colors.trans } },
-                inactive = { c = { fg = colors.dim, bg = colors.trans }, x = { fg = colors.dim, bg = colors.trans } },
-            }
-
-            opts.sections.lualine_a = {}
-            opts.sections.lualine_b = {}
-            opts.sections.lualine_y = {}
-            opts.sections.lualine_z = {}
-
-            opts.sections.lualine_c = {
+            opts.sections.lualine_a = {
                 {
                     "mode",
                     fmt = function(str)
                         return str:sub(1, 1)
                     end,
-                    color = txt_style(colors.pink),
-                    padding = { left = 1, right = 1 },
                 },
-                split(),
+            }
+
+            opts.sections.lualine_b = {
+                { "branch", icon = "" },
+            }
+
+            opts.sections.lualine_c = {
                 {
-                    "branch",
-                    icon = "",
-                    color = txt_style(colors.purple),
-                    padding = { left = 1, right = 1 },
-                    cond = has_branch,
+                    "filename",
+                    path = 0,
+                    symbols = {
+                        modified = " ●",
+                        readonly = " ",
+                        unnamed = "[No Name]",
+                    },
+                    color = { fg = "#ebdbb2", gui = "bold" },
                 },
-                split(has_branch),
                 {
                     function()
-                        local fname = vim.fn.expand("%:t")
-                        if fname == "" then
-                            return "[No Name]"
+                        local current_node = vim.treesitter.get_node()
+                        if not current_node then
+                            return ""
                         end
-                        local ok, devicons = pcall(require, "nvim-web-devicons")
-                        local icon = ""
-                        if ok then
-                            local f_icon = devicons.get_icon(fname, vim.fn.expand("%:e"), { default = true })
-                            if f_icon then
-                                icon = f_icon .. " "
+                        while current_node do
+                            local type = current_node:type()
+                            if
+                                type == "function_declaration"
+                                or type == "function_definition"
+                                or type == "method_declaration"
+                            then
+                                for child in current_node:iter_children() do
+                                    if
+                                        child:type() == "identifier"
+                                        or child:type() == "name"
+                                        or child:type() == "property_identifier"
+                                    then
+                                        return "󰊕 " .. vim.treesitter.get_node_text(child, 0)
+                                    end
+                                end
+                                break
                             end
+                            current_node = current_node:parent()
                         end
-                        local modified = vim.bo.modified and " ●" or ""
-                        local readonly = (vim.bo.readonly or not vim.bo.modifiable) and " " or ""
-                        return icon .. fname .. modified .. readonly
+                        return ""
                     end,
-                    color = txt_style(colors.blue),
-                    padding = { left = 1, right = 1 },
+                    color = { fg = "#d65d0e" },
                 },
             }
 
@@ -137,15 +102,7 @@ return {
                     "diagnostics",
                     sources = { "nvim_diagnostic" },
                     symbols = { error = " ", warn = " ", info = " ", hint = " " },
-                    diagnostics_color = {
-                        error = { fg = colors.red, bg = colors.trans },
-                        warn = { fg = colors.pink, bg = colors.trans },
-                        info = { fg = colors.cyan, bg = colors.trans },
-                        hint = { fg = colors.text, bg = colors.trans },
-                    },
-                    padding = { left = 0, right = 1 },
                 },
-                split(has_diagnostic),
                 {
                     function()
                         local clients = vim.lsp.get_clients()
@@ -159,30 +116,26 @@ return {
                             end
                         end
                         if #client_names > 0 then
-                            return "  " .. table.concat(client_names, ", ")
+                            return "  LSP - " .. table.concat(client_names, ", ")
                         end
                         return ""
                     end,
-                    color = txt_style(colors.teal),
-                    padding = { left = 1, right = 1 },
+                    color = { fg = "#928374" },
                 },
-                split(has_lsp),
-                {
-                    "filesize",
-                    color = txt_style(colors.cyan),
-                    padding = { left = 1, right = 1 },
-                },
-                split(),
+            }
+
+            opts.sections.lualine_y = {
+                "filesize",
+                "progress",
+            }
+
+            opts.sections.lualine_z = {
+                "location",
                 {
                     function()
-                        local line = vim.fn.line(".")
-                        local col = vim.fn.col(".")
-                        local total = vim.fn.line("$")
-                        local percent = math.floor((line / total) * 100)
-                        return string.format("%d%%%% %d:%d", percent, line, col)
+                        return os.date("%H:%M")
                     end,
-                    color = txt_style(colors.lblue),
-                    padding = { left = 1, right = 1 },
+                    icon = " ",
                 },
             }
         end,
