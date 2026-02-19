@@ -1,3 +1,10 @@
+-- needed so neovim can figure that .cls files should trigger apex LSP
+vim.filetype.add({
+    extension = {
+        cls = "apex",
+    },
+})
+
 return {
     {
         "neovim/nvim-lspconfig",
@@ -9,6 +16,14 @@ return {
                     apex_enable_semantic_errors = true,
                     apex_enable_completion_statistics = false,
                     filetypes = { "apex" },
+                    cmd = {
+                        "java",
+                        "-cp",
+                        vim.fn.expand(
+                            "~/.local/share/nvim/mason/packages/apex-language-server/extension/dist/apex-jorje-lsp.jar"
+                        ),
+                        "apex.jorje.lsp.ApexLanguageServerLauncher",
+                    },
                 },
 
                 -- LWC - web components
