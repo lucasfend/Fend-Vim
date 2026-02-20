@@ -13,6 +13,24 @@ return {
                 show_close_icon = false,
                 indicator = { style = "none" },
 
+                name_formatter = function(buf)
+                    local ok, harpoon = pcall(require, "harpoon")
+                    if not ok then
+                        return buf.name
+                    end
+
+                    local buf_path = vim.fn.fnamemodify(buf.path, ":.")
+                    local list = harpoon:list()
+
+                    for i, item in ipairs(list.items) do
+                        if item.value == buf_path then
+                            return string.format("[H:%d] %s", i, buf.name)
+                        end
+                    end
+
+                    return buf.name
+                end,
+
                 offsets = {
                     {
                         filetype = "neo-tree",
