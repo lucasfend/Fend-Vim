@@ -32,4 +32,4 @@ Ensure you have the following dependencies installed on your system before proce
 
 ## Remembering
 
-This is not a tutorial or a installation guide, it is important that you discover/debug things by yourself.
+This is not a tutorial or a installation guide, it is important that you discover/debug things by yourself. You can find me on my [LinkedIn](https://www.linkedin.com/in/lucasribfend/) if you have any issues or doubts, I'll try to help.
