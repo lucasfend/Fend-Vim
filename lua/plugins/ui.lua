@@ -3,12 +3,33 @@ return {
         "ellisonleao/gruvbox.nvim",
         priority = 1000,
         config = function()
+            -- Configuração inicial (Dark com transparência)
             require("gruvbox").setup({
                 contrast = "hard",
                 transparent_mode = true,
             })
 
+            -- Comando Light: Desliga a transparência nativa do plugin e muda pra claro
+            vim.api.nvim_create_user_command("GruvboxLight", function()
+                vim.o.background = "light"
+                require("gruvbox").setup({ contrast = "hard", transparent_mode = false })
+                vim.cmd("colorscheme gruvbox")
+            end, {})
+
+            -- Comando Dark: Liga a transparência nativa do plugin e muda pra escuro
+            vim.api.nvim_create_user_command("GruvboxDark", function()
+                vim.o.background = "dark"
+                require("gruvbox").setup({ contrast = "hard", transparent_mode = true })
+                vim.cmd("colorscheme gruvbox")
+            end, {})
+
             local function set_transparency()
+                -- Trava de segurança: impede que a sua transparência customizada
+                -- remova o fundo branco no modo light.
+                if vim.o.background == "light" then
+                    return
+                end
+
                 local groups = {
                     "Normal",
                     "NormalNC",
