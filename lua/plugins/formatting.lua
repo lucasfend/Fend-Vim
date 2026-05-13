@@ -15,6 +15,10 @@ return {
                     prepend_args = { "-i", "4" },
                 },
             },
+
+            formatters_by_ft = {
+                kotlin = { "ktlint" },
+            },
         },
     },
 }
