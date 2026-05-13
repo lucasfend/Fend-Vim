@@ -90,6 +90,20 @@ return {
         end,
 
         opts = function(_, opts)
+            local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
+
+            local workspace_dir = vim.fn.stdpath("data") .. "/jdtls-workspace/" .. project_name
+
+            opts.cmd = opts.cmd or {}
+
+            vim.list_extend(opts.cmd, {
+                "-data",
+                workspace_dir,
+
+                "-Xms1g",
+                "-Xmx4g",
+            })
+
             local mason_root = vim.fn.stdpath("data") .. "/mason"
 
             local bundles = {}
@@ -128,9 +142,48 @@ return {
             opts.init_options = opts.init_options or {}
             opts.init_options.bundles = bundles
 
+            opts.settings = {
+                java = {
+                    configuration = {
+                        updateBuildConfiguration = "interactive",
+                    },
+
+                    format = {
+                        enabled = true,
+                    },
+
+                    saveActions = {
+                        organizeImports = true,
+                    },
+
+                    completion = {
+                        favoriteStaticMembers = {
+                            "org.assertj.core.api.Assertions.*",
+                            "org.mockito.Mockito.*",
+                            "org.mockito.ArgumentMatchers.*",
+                            "org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*",
+                            "org.springframework.test.web.servlet.result.MockMvcResultMatchers.*",
+                        },
+                    },
+
+                    sources = {
+                        organizeImports = {
+                            starThreshold = 9999,
+                            staticStarThreshold = 9999,
+                        },
+                    },
+                },
+            }
+
             vim.api.nvim_create_autocmd("LspAttach", {
                 callback = function(args)
                     local client = vim.lsp.get_client_by_id(args.data.client_id)
+
+                    if client and client.server_capabilities.inlayHintProvider then
+                        vim.lsp.inlay_hint.enable(true, {
+                            bufnr = args.buf,
+                        })
+                    end
 
                     if client and client.name == "jdtls" then
                         local ok_dap, _ = pcall(require, "dap")
@@ -173,6 +226,28 @@ return {
                         vim.lsp.buf.code_action,
                         vim.tbl_extend("force", opts, {
                             desc = "Code Action",
+                        })
+                    )
+
+                    vim.keymap.set(
+                        "n",
+                        "<leader>jR",
+                        function()
+                            vim.cmd("JdtRestart")
+                        end,
+                        vim.tbl_extend("force", opts, {
+                            desc = "Restart JDTLS",
+                        })
+                    )
+
+                    vim.keymap.set(
+                        "n",
+                        "<leader>jc",
+                        function()
+                            require("jdtls").compile("full")
+                        end,
+                        vim.tbl_extend("force", opts, {
+                            desc = "Compile Java",
                         })
                     )
 

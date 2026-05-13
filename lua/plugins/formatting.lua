@@ -19,6 +19,10 @@ return {
             formatters_by_ft = {
                 kotlin = { "ktlint" },
             },
+
+            formatters_by_ft = {
+                java = { "google-java-format" },
+            },
         },
     },
 }
