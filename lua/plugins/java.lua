@@ -149,7 +149,7 @@ return {
                     },
 
                     format = {
-                        enabled = true,
+                        enabled = false,
                     },
 
                     saveActions = {

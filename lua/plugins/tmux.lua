@@ -53,7 +53,9 @@ return {
                         readonly = " ",
                         unnamed = "[No Name]",
                     },
-                    color = { fg = "#ebdbb2", gui = "bold" },
+                    color = function()
+                        return { fg = vim.o.background == "light" and "#3c3836" or "#ebdbb2", gui = "bold" }
+                    end,
                 },
                 {
                     function()
@@ -83,7 +85,9 @@ return {
                         end
                         return ""
                     end,
-                    color = { fg = "#d65d0e" },
+                    color = function()
+                        return { fg = vim.o.background == "light" and "#af3a03" or "#d65d0e" }
+                    end,
                 },
             }
 
@@ -110,7 +114,9 @@ return {
                         end
                         return ""
                     end,
-                    color = { fg = "#928374" },
+                    color = function()
+                        return { fg = vim.o.background == "light" and "#7c6f64" or "#928374" }
+                    end,
                 },
             }
 

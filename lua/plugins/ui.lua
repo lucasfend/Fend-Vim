@@ -83,6 +83,18 @@ return {
             require("lazyvim.util").config.setup(opts)
             vim.opt.foldcolumn = "0"
             vim.opt.fillchars = { vert = " ", eob = " ", diff = "╱" }
+
+            local state_file = vim.fn.expand("~/.config/theme/current")
+            local f = io.open(state_file, "r")
+            if f then
+                local mode = f:read("*l"):gsub("%s+", "")
+                f:close()
+                if mode == "light" then
+                    vim.o.background = "light"
+                    require("gruvbox").setup({ contrast = "hard", transparent_mode = false })
+                    vim.cmd("colorscheme gruvbox")
+                end
+            end
         end,
     },
 

@@ -19,3 +19,5 @@ vim.opt.termguicolors = true
 vim.api.nvim_set_hl(0, "SnacksDashboardHeader", { fg = "#81A1C1" })
 
 vim.lsp.inlay_hint.enable(true)
+
+vim.opt.guicursor = "n-v-c:block,i-ci:ver25"

@@ -131,31 +131,48 @@ return {
         config = function(_, opts)
             require("bufferline").setup(opts)
 
-            local groups = {
-                "TabLine",
-                "TabLineFill",
-                "TabLineSel",
-                "BufferLineFill",
-                "BufferLineBackground",
-                "BufferLineOffset",
-                "BufferLineSeparator",
-                "BufferLineSeparatorSelected",
-            }
+            local function apply_highlights()
+                local is_light = vim.o.background == "light"
 
-            for _, group in ipairs(groups) do
-                vim.api.nvim_set_hl(0, group, { bg = "NONE" })
+                local groups = {
+                    "TabLine",
+                    "TabLineFill",
+                    "TabLineSel",
+                    "BufferLineFill",
+                    "BufferLineBackground",
+                    "BufferLineOffset",
+                    "BufferLineSeparator",
+                    "BufferLineSeparatorSelected",
+                }
+                for _, group in ipairs(groups) do
+                    vim.api.nvim_set_hl(0, group, { bg = "NONE" })
+                end
+
+                -- Buffer inativo: cinza legível em ambos os modos
+                vim.api.nvim_set_hl(0, "BufferLineBackground", {
+                    fg = is_light and "#7c6f64" or "#928374",
+                    bg = "NONE",
+                })
+
+                -- Buffer ativo: contraste máximo em ambos os modos
+                vim.api.nvim_set_hl(0, "BufferLineBufferSelected", {
+                    fg = is_light and "#282828" or "#fbf1c7",
+                    bg = "NONE",
+                    bold = true,
+                })
+
+                vim.api.nvim_set_hl(0, "BufferLineCloseButtonSelected", {
+                    fg = is_light and "#282828" or "#fbf1c7",
+                    bg = "NONE",
+                    bold = true,
+                })
             end
 
-            vim.api.nvim_set_hl(0, "BufferLineBufferSelected", {
-                fg = "#fbf1c7",
-                bg = "NONE",
-                bold = true,
-            })
+            apply_highlights()
 
-            vim.api.nvim_set_hl(0, "BufferLineCloseButtonSelected", {
-                fg = "#fbf1c7",
-                bg = "NONE",
-                bold = true,
+            -- Reaplica sempre que o colorscheme mudar
+            vim.api.nvim_create_autocmd("ColorScheme", {
+                callback = apply_highlights,
             })
         end,
     },
