@@ -7,6 +7,16 @@ return {
             require("gruvbox").setup({
                 contrast = "hard",
                 transparent_mode = true,
+                palette_overrides = {
+                    dark0_hard = "#1d2021",
+                    bright_red = "#b23a33",
+                    bright_green = "#7a9921",
+                    bright_yellow = "#bd9c3a",
+                    bright_blue = "#65828f",
+                    bright_purple = "#b572a1",
+                    bright_aqua = "#669486",
+                    bright_orange = "#bf6228",
+                },
             })
 
             -- Comando Light: Desliga a transparência nativa do plugin e muda pra claro
