@@ -96,7 +96,7 @@ return {
                             end
                         end
                         if #client_names > 0 then
-                            return "  LSP - " .. table.concat(client_names, ", ")
+                            return "  " .. table.concat(client_names, ", ")
                         end
                         return ""
                     end,
@@ -115,16 +115,11 @@ return {
                 },
                 "filesize",
                 "progress",
+                "filetype",
             }
 
             opts.sections.lualine_z = {
                 "location",
-                {
-                    function()
-                        return os.date("%H:%M")
-                    end,
-                    icon = " ",
-                },
             }
         end,
     },
